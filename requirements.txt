@@ -1,0 +1,13 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+langgraph>=0.2
+langchain-core>=0.3
+langchain-chroma>=0.1
+langchain-text-splitters>=0.3
+langchain-huggingface>=0.1
+langchain-anthropic>=0.2
+langchain-openai>=0.2
+sentence-transformers>=3.0
+mcp>=1.2,<2
+pydantic>=2.7
+pytest>=8.0

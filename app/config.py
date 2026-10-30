@@ -1,35 +1,55 @@
+
 import os
 from pathlib import Path
 
-# Some corporate proxies corrupt HuggingFace's "xet" transfer protocol;
-# fall back to plain HTTP downloads unless the user has set this explicitly.
-os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
+from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Load environment variables from project root
+load_dotenv(PROJECT_ROOT / ".env")
+
 DATA_DIR = PROJECT_ROOT / "data" / "policies"
 CHROMA_DIR = PROJECT_ROOT / ".chroma"
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "anthropic").lower()
-ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+GEMINI_MODEL = os.getenv(
+    "GEMINI_MODEL",
+    "gemini-3.8-flash"
+)
+
+GEMINI_EMBEDDING_MODEL = os.getenv(
+    "GEMINI_EMBEDDING_MODEL",
+    "gemini-embedding-001"
+)
+
+
+def check_api_key():
+    if not GOOGLE_API_KEY:
+        raise ValueError(
+            "GOOGLE_API_KEY is missing. Add it to your .env file."
+        )
 
 
 def get_llm(temperature: float = 0.0):
-    if LLM_PROVIDER == "openai":
-        from langchain_openai import ChatOpenAI
+    check_api_key()
 
-        return ChatOpenAI(model=OPENAI_MODEL, temperature=temperature)
-    if LLM_PROVIDER == "anthropic":
-        from langchain_anthropic import ChatAnthropic
+    from langchain_google_genai import ChatGoogleGenerativeAI
 
-        return ChatAnthropic(model=ANTHROPIC_MODEL, temperature=temperature)
-    raise ValueError(
-        f"Unsupported LLM_PROVIDER '{LLM_PROVIDER}'. Use 'anthropic' or 'openai'."
+    return ChatGoogleGenerativeAI(
+        model=GEMINI_MODEL,
+        temperature=temperature,
+        google_api_key=GOOGLE_API_KEY
     )
 
 
 def get_embedding_function():
-    from langchain_huggingface import HuggingFaceEmbeddings
+    check_api_key()
 
-    return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
+    return GoogleGenerativeAIEmbeddings(
+        model=GEMINI_EMBEDDING_MODEL,
+        google_api_key=GOOGLE_API_KEY
+    )

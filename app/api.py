@@ -23,4 +23,7 @@ def health():
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest) -> ChatResponse:
     result = ask(request.question)
-    return ChatResponse(answer=result.answer, sources=result.sources)
+    return ChatResponse(
+	    answer=result["answer"],
+    	sources=result["sources"]
+	)

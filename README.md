@@ -136,11 +136,11 @@ enterprise-rag-agent/
 ### 1. Clone the Repository
 
 ```bash
-git clone YOUR_REPOSITORY_URL
+git clone https://github.com/uzairalee100/enterprise-rag-agent.git
 cd enterprise-rag-agent
 ```
 
-Replace `YOUR_REPOSITORY_URL` with your GitHub repository URL.
+
 
 ### 2. Create a Virtual Environment
 
